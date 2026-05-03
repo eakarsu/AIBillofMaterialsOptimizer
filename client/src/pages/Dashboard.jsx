@@ -63,8 +63,13 @@ export default function Dashboard() {
   useEffect(() => {
     cards.forEach(async card => {
       try {
-        const { data } = await api.get(card.endpoint);
-        setCounts(prev => ({ ...prev, [card.key]: data.length }));
+        const { data } = await api.get(card.endpoint, { params: { page: 1, limit: 1 } });
+        // Handle both paginated {data, pagination} and legacy array responses
+        if (data && data.pagination) {
+          setCounts(prev => ({ ...prev, [card.key]: data.pagination.total }));
+        } else if (Array.isArray(data)) {
+          setCounts(prev => ({ ...prev, [card.key]: data.length }));
+        }
       } catch {}
     });
     api.get('/reports/dashboard-stats').then(({ data }) => setStats(data)).catch(() => {});

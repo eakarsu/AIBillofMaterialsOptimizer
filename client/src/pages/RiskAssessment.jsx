@@ -14,12 +14,30 @@ export default function RiskAssessment() {
   const [aiResult, setAiResult] = useState(null);
   const [error, setError] = useState('');
 
-  const load = async () => { setLoading(true); try { const [risks, bom] = await Promise.all([api.get('/risks'), api.get('/bom')]); setItems(risks.data); setBomItems(bom.data); } catch (e) { setError(e.message); } setLoading(false); };
+  const load = async () => {
+    setLoading(true);
+    try {
+      const [risks, bom] = await Promise.all([
+        api.get('/risks', { params: { limit: 200 } }),
+        api.get('/bom', { params: { limit: 200 } }),
+      ]);
+      setItems(risks.data?.data || risks.data || []);
+      setBomItems(bom.data?.data || bom.data || []);
+    } catch (e) { setError(e.message); }
+    setLoading(false);
+  };
   useEffect(() => { load(); }, []);
 
   const handleSave = async () => { try { if (form.id) await api.put(`/risks/${form.id}`, form); else await api.post('/risks', form); setForm(null); load(); } catch (e) { setError(e.response?.data?.error || e.message); } };
   const handleDelete = async (id) => { if (!confirm('Delete this assessment?')) return; try { await api.delete(`/risks/${id}`); setSelected(null); load(); } catch (e) { setError(e.message); } };
-  const handleAi = async (bomItemId) => { setAiLoading(true); setAiResult(null); try { const { data } = await api.post(`/risks/ai/analyze/${bomItemId}`); setAiResult(data.analysis); } catch (e) { setError(e.message); } setAiLoading(false); };
+  const handleAi = async (bomItemId) => {
+    setAiLoading(true); setAiResult(null);
+    try {
+      const { data } = await api.post(`/risks/ai/analyze/${bomItemId}`);
+      setAiResult(typeof data.data === 'object' ? JSON.stringify(data.data, null, 2) : data.analysis);
+    } catch (e) { setError(e.message); }
+    setAiLoading(false);
+  };
 
   if (loading) return <div className="loading-container"><div className="spinner-lg"></div>Loading risk assessments...</div>;
 

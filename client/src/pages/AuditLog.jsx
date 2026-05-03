@@ -18,9 +18,10 @@ export default function AuditLog() {
       if (filters.action) params.set('action', filters.action);
       if (filters.search) params.set('search', filters.search);
       const { data } = await api.get(`/audit?${params}`);
-      setLogs(data.logs);
-      setTotalPages(data.total_pages);
-      setTotal(data.total);
+      // Handle both {data, pagination} and legacy {logs, total, total_pages} format
+      setLogs(data.data || data.logs || []);
+      setTotalPages(data.pagination?.total_pages || data.total_pages || 1);
+      setTotal(data.pagination?.total || data.total || 0);
     } catch (e) { console.error(e); }
     setLoading(false);
   };

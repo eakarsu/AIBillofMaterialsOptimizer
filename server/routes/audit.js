@@ -6,8 +6,11 @@ const router = express.Router();
 // Get audit logs with pagination and filtering
 router.get('/', auth, async (req, res) => {
   try {
-    const { page = 1, limit = 50, entity_type, action, search } = req.query;
-    const offset = (page - 1) * limit;
+    const pg = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(200, Math.max(1, parseInt(req.query.limit) || 50));
+    const offset = (pg - 1) * limit;
+    const { entity_type, action, search } = req.query;
+
     let query = 'SELECT * FROM audit_log WHERE 1=1';
     const params = [];
 
@@ -26,18 +29,15 @@ router.get('/', auth, async (req, res) => {
 
     const countQuery = query.replace('SELECT *', 'SELECT COUNT(*)');
     const countResult = await pool.query(countQuery, params);
+    const total = parseInt(countResult.rows[0].count);
 
-    params.push(limit);
-    query += ` ORDER BY created_at DESC LIMIT $${params.length}`;
-    params.push(offset);
-    query += ` OFFSET $${params.length}`;
+    params.push(limit, offset);
+    query += ` ORDER BY created_at DESC LIMIT $${params.length - 1} OFFSET $${params.length}`;
 
     const result = await pool.query(query, params);
     res.json({
-      logs: result.rows,
-      total: parseInt(countResult.rows[0].count),
-      page: parseInt(page),
-      total_pages: Math.ceil(countResult.rows[0].count / limit)
+      data: result.rows,
+      pagination: { page: pg, limit, total, total_pages: Math.ceil(total / limit) || 1 },
     });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });

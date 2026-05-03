@@ -17,8 +17,12 @@ export default function CostDownAnalysis() {
   const load = async () => {
     setLoading(true);
     try {
-      const [cd, bom] = await Promise.all([api.get('/costdown'), api.get('/bom')]);
-      setItems(cd.data); setBomItems(bom.data);
+      const [cd, bom] = await Promise.all([
+        api.get('/costdown', { params: { limit: 200 } }),
+        api.get('/bom', { params: { limit: 200 } }),
+      ]);
+      setItems(cd.data?.data || cd.data || []);
+      setBomItems(bom.data?.data || bom.data || []);
     } catch (e) { setError(e.message); }
     setLoading(false);
   };
@@ -39,7 +43,10 @@ export default function CostDownAnalysis() {
 
   const handleAiAnalyze = async (bomItemId) => {
     setAiLoading(true); setAiResult(null);
-    try { const { data } = await api.post(`/costdown/ai/analyze/${bomItemId}`); setAiResult(data.analysis); } catch (e) { setError(e.message); }
+    try {
+      const { data } = await api.post(`/costdown/ai/analyze/${bomItemId}`);
+      setAiResult(typeof data.data === 'object' ? JSON.stringify(data.data, null, 2) : data.analysis);
+    } catch (e) { setError(e.message); }
     setAiLoading(false);
   };
 

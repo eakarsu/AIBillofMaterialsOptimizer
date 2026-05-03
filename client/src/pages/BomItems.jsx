@@ -23,25 +23,35 @@ export default function BomItems() {
   const [showImport, setShowImport] = useState(false);
   const [importCsv, setImportCsv] = useState('');
   const [importResult, setImportResult] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const PAGE_LIMIT = 100;
 
-  const load = async () => {
+  const load = async (p = 1) => {
     setLoading(true);
-    try { const { data } = await api.get('/bom'); setItems(data); } catch (e) { setError(e.message); }
+    try {
+      const { data } = await api.get('/bom', { params: { page: p, limit: PAGE_LIMIT } });
+      setItems(data.data || []);
+      setPage(data.pagination?.page || 1);
+      setTotalPages(data.pagination?.total_pages || 1);
+      setTotalItems(data.pagination?.total || 0);
+    } catch (e) { setError(e.message); }
     setLoading(false);
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(1); }, []);
 
   const handleSave = async () => {
     try {
       if (form.id) await api.put(`/bom/${form.id}`, form);
       else await api.post('/bom', form);
-      setForm(null); load();
+      setForm(null); load(page);
     } catch (e) { setError(e.response?.data?.error || e.message); }
   };
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this BOM item?')) return;
-    try { await api.delete(`/bom/${id}`); setSelected(null); load(); } catch (e) { setError(e.message); }
+    try { await api.delete(`/bom/${id}`); setSelected(null); load(page); } catch (e) { setError(e.message); }
   };
 
   const handleAiOptimize = async (id) => {
@@ -72,7 +82,7 @@ export default function BomItems() {
     try {
       const { data } = await api.post('/export/bom/csv', { csvData: importCsv });
       setImportResult(data);
-      if (data.imported > 0) load();
+      if (data.imported > 0) load(1);
     } catch (e) { setError(e.response?.data?.error || e.message); }
   };
 
@@ -93,6 +103,11 @@ export default function BomItems() {
 
   const categories = [...new Set(items.map(i => i.category).filter(Boolean))];
   const suppliers = [...new Set(items.map(i => i.supplier).filter(Boolean))];
+  const renderAiResult = (result) => {
+    if (!result) return null;
+    if (typeof result === 'string') return <pre className="ai-pre">{result}</pre>;
+    return <pre className="ai-pre" style={{ maxHeight: 400, overflow: 'auto' }}>{JSON.stringify(result, null, 2)}</pre>;
+  };
 
   let filtered = items.filter(item => {
     if (search) {
@@ -116,7 +131,7 @@ export default function BomItems() {
     });
   }
 
-  const totalCost = filtered.reduce((s, i) => s + parseFloat(i.total_cost || 0), 0);
+  const totalCost = items.reduce((s, i) => s + parseFloat(i.total_cost || 0), 0);
   const sortIcon = (field) => sortField === field ? (sortDir === 'asc' ? ' ↑' : ' ↓') : '';
 
   return (
@@ -136,8 +151,8 @@ export default function BomItems() {
       {error && <div className="error-message">{error} <button onClick={() => setError('')} style={{float:'right',background:'none',border:'none',color:'#f87171',cursor:'pointer'}}>×</button></div>}
 
       <div className="stats-bar">
-        <div className="stat-card"><div className="stat-label">Total Items</div><div className="stat-value">{filtered.length}{filtered.length !== items.length ? ` / ${items.length}` : ''}</div></div>
-        <div className="stat-card"><div className="stat-label">Total BOM Cost</div><div className="stat-value">${totalCost.toLocaleString('en-US', {minimumFractionDigits: 2})}</div></div>
+        <div className="stat-card"><div className="stat-label">Total Items</div><div className="stat-value">{totalItems}</div></div>
+        <div className="stat-card"><div className="stat-label">Page Cost</div><div className="stat-value">${totalCost.toLocaleString('en-US', {minimumFractionDigits: 2})}</div></div>
         <div className="stat-card"><div className="stat-label">Categories</div><div className="stat-value">{categories.length}</div></div>
         <div className="stat-card"><div className="stat-label">Suppliers</div><div className="stat-value">{suppliers.length}</div></div>
       </div>
@@ -163,7 +178,7 @@ export default function BomItems() {
         )}
       </div>
 
-      {aiGlobalResult && <AIAnalysis content={aiGlobalResult.analysis} title={`BOM Optimization Analysis (${aiGlobalResult.total_items} items, Total: $${aiGlobalResult.total_cost})`} />}
+      {aiGlobalResult && <AIAnalysis content={typeof aiGlobalResult.data === 'object' ? JSON.stringify(aiGlobalResult.data, null, 2) : aiGlobalResult.analysis} title={`BOM Optimization Analysis (${aiGlobalResult.total_items} items, Total: $${aiGlobalResult.total_cost})`} />}
 
       <div className="table-container" style={{marginTop: 20}}>
         <table>
@@ -196,6 +211,14 @@ export default function BomItems() {
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 16 }}>
+          <button className="btn btn-secondary" disabled={page <= 1} onClick={() => load(page - 1)}>Prev</button>
+          <span style={{ padding: '8px 12px', color: '#94a3b8' }}>Page {page} / {totalPages} ({totalItems} items)</span>
+          <button className="btn btn-secondary" disabled={page >= totalPages} onClick={() => load(page + 1)}>Next</button>
+        </div>
+      )}
 
       {showImport && (
         <div className="modal-overlay" onClick={() => { setShowImport(false); setImportResult(null); setImportCsv(''); }}>

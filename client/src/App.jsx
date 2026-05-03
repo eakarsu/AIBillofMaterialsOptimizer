@@ -14,6 +14,7 @@ import BomVersions from './pages/BomVersions';
 import RiskAssessment from './pages/RiskAssessment';
 import Reports from './pages/Reports';
 import AuditLog from './pages/AuditLog';
+import AIInsights from './pages/AIInsights';
 import Layout from './components/Layout';
 import './styles.css';
 
@@ -60,6 +61,7 @@ export default function App() {
           <Route path="/risks" element={<RiskAssessment />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/audit" element={<AuditLog />} />
+          <Route path="/ai-insights" element={<AIInsights />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Layout>

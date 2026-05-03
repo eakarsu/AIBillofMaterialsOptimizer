@@ -31,6 +31,7 @@ CREATE TABLE bom_items (
   total_cost DECIMAL(12,2),
   supplier VARCHAR(255),
   status VARCHAR(50) DEFAULT 'active',
+  parent_id INTEGER REFERENCES bom_items(id) ON DELETE SET NULL,
   ai_optimization_notes TEXT,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
@@ -208,4 +209,27 @@ CREATE TABLE risk_assessments (
   ai_analysis TEXT,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE ai_results (
+  id SERIAL PRIMARY KEY,
+  feature VARCHAR(100) NOT NULL,
+  entity_type VARCHAR(100),
+  entity_id INTEGER,
+  user_email VARCHAR(255),
+  request_payload JSONB,
+  response JSONB,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_ai_results_feature ON ai_results(feature);
+CREATE INDEX IF NOT EXISTS idx_ai_results_entity ON ai_results(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_ai_results_created ON ai_results(created_at DESC);
+
+CREATE TABLE bom_version_items (
+  id SERIAL PRIMARY KEY,
+  bom_version_id INTEGER REFERENCES bom_versions(id) ON DELETE CASCADE,
+  bom_item_id INTEGER REFERENCES bom_items(id) ON DELETE CASCADE,
+  quantity INTEGER DEFAULT 1,
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
 );

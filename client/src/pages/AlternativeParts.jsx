@@ -17,8 +17,12 @@ export default function AlternativeParts() {
   const load = async () => {
     setLoading(true);
     try {
-      const [alts, bom] = await Promise.all([api.get('/alternatives'), api.get('/bom')]);
-      setItems(alts.data); setBomItems(bom.data);
+      const [alts, bom] = await Promise.all([
+        api.get('/alternatives', { params: { limit: 200 } }),
+        api.get('/bom', { params: { limit: 200 } }),
+      ]);
+      setItems(alts.data?.data || alts.data || []);
+      setBomItems(bom.data?.data || bom.data || []);
     } catch (e) { setError(e.message); }
     setLoading(false);
   };
@@ -39,7 +43,10 @@ export default function AlternativeParts() {
 
   const handleAiFind = async (bomItemId) => {
     setAiLoading(true); setAiResult(null);
-    try { const { data } = await api.post(`/alternatives/ai/find/${bomItemId}`); setAiResult(data.analysis); } catch (e) { setError(e.message); }
+    try {
+      const { data } = await api.post(`/alternatives/ai/find/${bomItemId}`);
+      setAiResult(typeof data.data === 'object' ? JSON.stringify(data.data, null, 2) : data.analysis);
+    } catch (e) { setError(e.message); }
     setAiLoading(false);
   };
 

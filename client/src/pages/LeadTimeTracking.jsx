@@ -17,8 +17,12 @@ export default function LeadTimeTracking() {
   const load = async () => {
     setLoading(true);
     try {
-      const [lt, bom] = await Promise.all([api.get('/leadtime'), api.get('/bom')]);
-      setItems(lt.data); setBomItems(bom.data);
+      const [lt, bom] = await Promise.all([
+        api.get('/leadtime', { params: { limit: 200 } }),
+        api.get('/bom', { params: { limit: 200 } }),
+      ]);
+      setItems(lt.data?.data || lt.data || []);
+      setBomItems(bom.data?.data || bom.data || []);
     } catch (e) { setError(e.message); }
     setLoading(false);
   };
@@ -39,7 +43,10 @@ export default function LeadTimeTracking() {
 
   const handleAiForecast = async (bomItemId) => {
     setAiLoading(true); setAiResult(null);
-    try { const { data } = await api.post(`/leadtime/ai/forecast/${bomItemId}`); setAiResult(data.analysis); } catch (e) { setError(e.message); }
+    try {
+      const { data } = await api.post(`/leadtime/ai/forecast/${bomItemId}`);
+      setAiResult(typeof data.data === 'object' ? JSON.stringify(data.data, null, 2) : data.analysis);
+    } catch (e) { setError(e.message); }
     setAiLoading(false);
   };
 

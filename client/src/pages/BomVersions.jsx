@@ -13,12 +13,26 @@ export default function BomVersions() {
   const [aiResult, setAiResult] = useState(null);
   const [error, setError] = useState('');
 
-  const load = async () => { setLoading(true); try { const { data } = await api.get('/bomversions'); setItems(data); } catch (e) { setError(e.message); } setLoading(false); };
+  const load = async () => {
+    setLoading(true);
+    try {
+      const { data } = await api.get('/bomversions', { params: { limit: 100 } });
+      setItems(data?.data || data || []);
+    } catch (e) { setError(e.message); }
+    setLoading(false);
+  };
   useEffect(() => { load(); }, []);
 
   const handleSave = async () => { try { if (form.id) await api.put(`/bomversions/${form.id}`, form); else await api.post('/bomversions', form); setForm(null); load(); } catch (e) { setError(e.response?.data?.error || e.message); } };
   const handleDelete = async (id) => { if (!confirm('Delete this version?')) return; try { await api.delete(`/bomversions/${id}`); setSelected(null); load(); } catch (e) { setError(e.message); } };
-  const handleAiCompare = async () => { setAiLoading(true); setAiResult(null); try { const { data } = await api.post('/bomversions/ai/compare'); setAiResult(data.analysis); } catch (e) { setError(e.message); } setAiLoading(false); };
+  const handleAiCompare = async () => {
+    setAiLoading(true); setAiResult(null);
+    try {
+      const { data } = await api.post('/bomversions/ai/compare');
+      setAiResult(typeof data.data === 'object' ? JSON.stringify(data.data, null, 2) : data.analysis);
+    } catch (e) { setError(e.message); }
+    setAiLoading(false);
+  };
 
   if (loading) return <div className="loading-container"><div className="spinner-lg"></div>Loading versions...</div>;
 

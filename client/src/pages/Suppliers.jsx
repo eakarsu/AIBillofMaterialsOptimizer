@@ -13,12 +13,26 @@ export default function Suppliers() {
   const [aiResult, setAiResult] = useState(null);
   const [error, setError] = useState('');
 
-  const load = async () => { setLoading(true); try { const { data } = await api.get('/suppliers'); setItems(data); } catch (e) { setError(e.message); } setLoading(false); };
+  const load = async () => {
+    setLoading(true);
+    try {
+      const { data } = await api.get('/suppliers', { params: { limit: 200 } });
+      setItems(data?.data || data || []);
+    } catch (e) { setError(e.message); }
+    setLoading(false);
+  };
   useEffect(() => { load(); }, []);
 
   const handleSave = async () => { try { if (form.id) await api.put(`/suppliers/${form.id}`, form); else await api.post('/suppliers', form); setForm(null); load(); } catch (e) { setError(e.response?.data?.error || e.message); } };
   const handleDelete = async (id) => { if (!confirm('Delete this supplier?')) return; try { await api.delete(`/suppliers/${id}`); setSelected(null); load(); } catch (e) { setError(e.message); } };
-  const handleAi = async (id) => { setAiLoading(true); setAiResult(null); try { const { data } = await api.post(`/suppliers/ai/evaluate/${id}`); setAiResult(data.analysis); } catch (e) { setError(e.message); } setAiLoading(false); };
+  const handleAi = async (id) => {
+    setAiLoading(true); setAiResult(null);
+    try {
+      const { data } = await api.post(`/suppliers/ai/evaluate/${id}`);
+      setAiResult(typeof data.data === 'object' ? JSON.stringify(data.data, null, 2) : data.analysis);
+    } catch (e) { setError(e.message); }
+    setAiLoading(false);
+  };
 
   if (loading) return <div className="loading-container"><div className="spinner-lg"></div>Loading suppliers...</div>;
 

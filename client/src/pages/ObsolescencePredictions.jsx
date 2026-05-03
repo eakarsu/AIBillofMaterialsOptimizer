@@ -17,8 +17,12 @@ export default function ObsolescencePredictions() {
   const load = async () => {
     setLoading(true);
     try {
-      const [obs, bom] = await Promise.all([api.get('/obsolescence'), api.get('/bom')]);
-      setItems(obs.data); setBomItems(bom.data);
+      const [obs, bom] = await Promise.all([
+        api.get('/obsolescence', { params: { limit: 200 } }),
+        api.get('/bom', { params: { limit: 200 } }),
+      ]);
+      setItems(obs.data?.data || obs.data || []);
+      setBomItems(bom.data?.data || bom.data || []);
     } catch (e) { setError(e.message); }
     setLoading(false);
   };
@@ -39,7 +43,10 @@ export default function ObsolescencePredictions() {
 
   const handleAiPredict = async (bomItemId) => {
     setAiLoading(true); setAiResult(null);
-    try { const { data } = await api.post(`/obsolescence/ai/predict/${bomItemId}`); setAiResult(data.analysis); } catch (e) { setError(e.message); }
+    try {
+      const { data } = await api.post(`/obsolescence/ai/predict/${bomItemId}`);
+      setAiResult(typeof data.data === 'object' ? JSON.stringify(data.data, null, 2) : data.analysis);
+    } catch (e) { setError(e.message); }
     setAiLoading(false);
   };
 
