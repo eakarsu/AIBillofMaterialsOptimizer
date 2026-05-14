@@ -16,6 +16,7 @@ const navItems = [
   { path: '/reports', label: 'Reports', icon: '◩' },
   { path: '/audit', label: 'Audit Log', icon: '⧉' },
   { path: '/ai-insights', label: 'AI Insights', icon: '🤖' },
+  { path: '/webhooks', label: 'Webhooks', icon: '🔔' },
 ];
 
 export default function Layout({ children, user, onLogout }) {

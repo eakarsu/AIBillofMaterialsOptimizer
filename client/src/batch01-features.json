@@ -1,0 +1,104 @@
+{
+  "project": "AIBillofMaterialsOptimizer",
+  "marker": "// === Batch 01 Gaps & Frontend Mounts ===",
+  "features": [
+    {
+      "slug": "agentic-procurement-workflow-that-auto-quotes-alte",
+      "component": "AgenticProcurementWorkflowThatAutoQuotesAltePage",
+      "label": "Agentic procurement workflow that auto-quotes alternative parts and chases supplier confirmations",
+      "endpoint": "/api/cf-agentic-procurement-workflow-that-auto-quotes-alte",
+      "kind": "cfs"
+    },
+    {
+      "slug": "rag-over-manufacturer-datasheets-and-pcn-notices-f",
+      "component": "RagOverManufacturerDatasheetsAndPcnNoticesFPage",
+      "label": "RAG over manufacturer datasheets and PCN notices for compliance Q&A",
+      "endpoint": "/api/cf-rag-over-manufacturer-datasheets-and-pcn-notices-f",
+      "kind": "cfs"
+    },
+    {
+      "slug": "real-time-anomaly-detection-on-supplier-lead-time-",
+      "component": "RealTimeAnomalyDetectionOnSupplierLeadTimePage",
+      "label": "Real-time anomaly detection on supplier lead-time drift with corrective recommendations",
+      "endpoint": "/api/cf-real-time-anomaly-detection-on-supplier-lead-time-",
+      "kind": "cfs"
+    },
+    {
+      "slug": "white-label-platform-for-oems-and-ems-providers-to",
+      "component": "WhiteLabelPlatformForOemsAndEmsProvidersToPage",
+      "label": "White-label platform for OEMs and EMS providers to brand the tool",
+      "endpoint": "/api/cf-white-label-platform-for-oems-and-ems-providers-to",
+      "kind": "cfs"
+    },
+    {
+      "slug": "only-1-mounted-ai-endpoint-despite-19-routes-no-ai",
+      "component": "Only1MountedAiEndpointDespite19RoutesNoAiPage",
+      "label": "Only 1 mounted AI endpoint despite 19 routes; no AI BOM cost optimization",
+      "endpoint": "/api/gap-only-1-mounted-ai-endpoint-despite-19-routes-no-ai",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-ai-obsolescence-prediction-logic-records-page-e",
+      "component": "NoAiObsolescencePredictionLogicRecordsPageEPage",
+      "label": "No AI obsolescence prediction logic (records page exists)",
+      "endpoint": "/api/gap-no-ai-obsolescence-prediction-logic-records-page-e",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-ai-lead-time-forecasting-per-supplier",
+      "component": "NoAiLeadTimeForecastingPerSupplierPage",
+      "label": "No AI lead-time forecasting per supplier",
+      "endpoint": "/api/gap-no-ai-lead-time-forecasting-per-supplier",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-ai-compliance-clause-extraction-from-datasheets",
+      "component": "NoAiComplianceClauseExtractionFromDatasheetsPage",
+      "label": "No AI compliance-clause extraction from datasheets",
+      "endpoint": "/api/gap-no-ai-compliance-clause-extraction-from-datasheets",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-ai-pcn-product-change-notification-summarizatio",
+      "component": "NoAiPcnProductChangeNotificationSummarizatioPage",
+      "label": "No AI PCN (product change notification) summarization",
+      "endpoint": "/api/gap-no-ai-pcn-product-change-notification-summarizatio",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-outbound-edi-for-supplier-purchase-orders-webho",
+      "component": "NoOutboundEdiForSupplierPurchaseOrdersWebhoPage",
+      "label": "No outbound EDI for supplier purchase orders (webhooks exist but no PO workflow)",
+      "endpoint": "/api/gap-no-outbound-edi-for-supplier-purchase-orders-webho",
+      "kind": "gap"
+    },
+    {
+      "slug": "notification-system-table-exists-but-no-email-sms-",
+      "component": "NotificationSystemTableExistsButNoEmailSmsPage",
+      "label": "Notification system table exists but no email/SMS delivery channel",
+      "endpoint": "/api/gap-notification-system-table-exists-but-no-email-sms-",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-multi-currency-cost-tracking",
+      "component": "NoMultiCurrencyCostTrackingPage",
+      "label": "No multi-currency cost tracking",
+      "endpoint": "/api/gap-no-multi-currency-cost-tracking",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-pcn-ingestion-pipeline-only-an-obsolescence-pre",
+      "component": "NoPcnIngestionPipelineOnlyAnObsolescencePrePage",
+      "label": "No PCN ingestion pipeline (only an \"obsolescence predictions\" store)",
+      "endpoint": "/api/gap-no-pcn-ingestion-pipeline-only-an-obsolescence-pre",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-cad-eda-tool-import-altium-kicad-cadence",
+      "component": "NoCadEdaToolImportAltiumKicadCadencePage",
+      "label": "No CAD/EDA tool import (Altium, KiCad, Cadence)",
+      "endpoint": "/api/gap-no-cad-eda-tool-import-altium-kicad-cadence",
+      "kind": "gap"
+    }
+  ]
+}

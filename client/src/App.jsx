@@ -15,6 +15,7 @@ import RiskAssessment from './pages/RiskAssessment';
 import Reports from './pages/Reports';
 import AuditLog from './pages/AuditLog';
 import AIInsights from './pages/AIInsights';
+import Webhooks from './pages/Webhooks';
 import Layout from './components/Layout';
 import './styles.css';
 
@@ -62,6 +63,7 @@ export default function App() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/audit" element={<AuditLog />} />
           <Route path="/ai-insights" element={<AIInsights />} />
+          <Route path="/webhooks" element={<Webhooks />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Layout>
