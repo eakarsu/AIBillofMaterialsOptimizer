@@ -16,8 +16,14 @@ import Reports from './pages/Reports';
 import AuditLog from './pages/AuditLog';
 import AIInsights from './pages/AIInsights';
 import Webhooks from './pages/Webhooks';
+import SupplierPcnImpactMatrix from './pages/SupplierPcnImpactMatrix';
 import Layout from './components/Layout';
 import './styles.css';
+
+import CodexCustomVizFeature from './pages/CodexCustomVizFeature';
+import CodexOperationsFeature from './pages/CodexOperationsFeature';
+
+import TimelineView from './pages/TimelineView';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -40,6 +46,10 @@ export default function App() {
   if (!token) return (
     <BrowserRouter>
       <Routes>
+        <Route path="/insights/timeline" element={<TimelineView />} />
+        <Route path="/codex/custom-viz" element={<CodexCustomVizFeature />} />
+        <Route path="/codex/operations" element={<CodexOperationsFeature />} />
+
         <Route path="*" element={<Login onLogin={handleLogin} />} />
       </Routes>
     </BrowserRouter>
@@ -64,6 +74,7 @@ export default function App() {
           <Route path="/audit" element={<AuditLog />} />
           <Route path="/ai-insights" element={<AIInsights />} />
           <Route path="/webhooks" element={<Webhooks />} />
+          <Route path="/supplier-pcn-impact-matrix" element={<SupplierPcnImpactMatrix />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Layout>

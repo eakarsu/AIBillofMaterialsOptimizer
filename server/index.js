@@ -67,6 +67,7 @@ app.use('/api/datasheet-rag', require('./routes/datasheetRag')); // apply pass 6
 app.use('/api/lead-time-drift', require('./routes/leadTimeDriftDetector')); // apply pass 6 — audit custom suggestion
 
 app.use('/api/white-label-tenant', require('./routes/whiteLabelTenant')); // apply pass 6 — audit custom suggestion
+app.use('/api/supplier-pcn-impact-matrix', require('./routes/supplierPcnImpactMatrix'));
 app.listen(PORT, () => {
   console.log(`🚀 BOM Optimizer API running on port ${PORT}`);
 });
