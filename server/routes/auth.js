@@ -28,11 +28,11 @@ router.post('/login',
       if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
 
       const token = jwt.sign(
-        { id: user.id, email: user.email, name: user.name },
+        { id: user.id, email: user.email, name: user.name, role: user.role, tenantId: user.tenant_id },
         process.env.JWT_SECRET,
         { expiresIn: '24h' }
       );
-      res.json({ token, user: { id: user.id, email: user.email, name: user.name } });
+      res.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role, tenantId: user.tenant_id } });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
@@ -51,12 +51,12 @@ router.post('/register',
       const { email, password, name } = req.body;
       const hashed = await bcrypt.hash(password, 10);
       const result = await pool.query(
-        'INSERT INTO users (email, password, name) VALUES ($1, $2, $3) RETURNING id, email, name',
+        "INSERT INTO users (email, password, name, role) VALUES ($1, $2, $3, 'viewer') RETURNING id, email, name, role, tenant_id",
         [email, hashed, name]
       );
       const user = result.rows[0];
       const token = jwt.sign(
-        { id: user.id, email: user.email, name: user.name },
+        { id: user.id, email: user.email, name: user.name, role: user.role, tenantId: user.tenant_id },
         process.env.JWT_SECRET,
         { expiresIn: '24h' }
       );
