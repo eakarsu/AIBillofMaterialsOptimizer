@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const pool = require('../db');
+const authenticate = require('../middleware/auth');
 const router = express.Router();
 
 function validate(req, res, next) {
@@ -67,5 +68,18 @@ router.post('/register',
     }
   }
 );
+
+router.get('/me', authenticate, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, email, name, role, tenant_id FROM users WHERE id = $1',
+      [req.user.id],
+    );
+    if (!result.rows[0]) return res.status(404).json({ error: 'User not found' });
+    res.json({ user: result.rows[0] });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = router;

@@ -39,6 +39,7 @@ app.set('aiRateLimiter', aiRateLimiter);
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/runtime-ai', require('./routes/runtimeAi'));
 app.use('/api/bom', require('./routes/bom'));
 app.use('/api/alternatives', require('./routes/alternatives'));
 app.use('/api/obsolescence', require('./routes/obsolescence'));
