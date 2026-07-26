@@ -60,6 +60,10 @@ cd "$project_dir"
 [[ -f .env ]] || { echo 'Missing .env; copy .env.example and configure it.' >&2; exit 1; }
 [[ -d server/node_modules && -d client/node_modules ]] || { echo 'Dependencies are missing; run scripts/bootstrap.sh explicitly.' >&2; exit 1; }
 set -a; source .env; set +a
+if [ "${NODE_ENV:-development}" != production ] && [ "${ENABLE_DEMO_CREDENTIAL_AUTOFILL:-true}" = true ]; then
+  psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f server/migrations/001_governed_bom_workflows.sql >/dev/null
+  BOOTSTRAP_ACKNOWLEDGEMENT=create-initial-admin node server/scripts/create-admin.js
+fi
 : "${BACKEND_PORT:?BACKEND_PORT is required}"
 : "${FRONTEND_PORT:?FRONTEND_PORT is required}"
 [[ "$BACKEND_PORT" != "$FRONTEND_PORT" ]] || { echo 'BACKEND_PORT and FRONTEND_PORT must differ.' >&2; exit 1; }
