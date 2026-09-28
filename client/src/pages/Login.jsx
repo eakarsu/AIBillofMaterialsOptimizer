@@ -46,7 +46,7 @@ export default function Login({ onLogin }) {
           </button>
         </form>
         <button type="button" className="btn btn-fill" onClick={fillCredentials} style={{ width: '100%' }}>
-          Auto-Fill Demo Credentials
+          Auto Fill Demo Credentials
         </button>
       </div>
     </div>
